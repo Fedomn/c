@@ -75,9 +75,9 @@ func (sl *SelectList) renderUI() {
 	}
 	for k, v := range items {
 		if k == sl.uiList.SelectedRow {
-			rows = append(rows, fmt.Sprintf("[%d] %s %s", k, v.Name, v.Cmd))
+			rows = append(rows, fmt.Sprintf("[%02d] %s %s", k, v.Name, v.Cmd))
 		} else {
-			rows = append(rows, fmt.Sprintf("[%d] %s", k, v.Name))
+			rows = append(rows, fmt.Sprintf("[%02d] %s", k, v.Name))
 		}
 	}
 	sl.uiList.Rows = rows
