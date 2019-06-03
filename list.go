@@ -7,6 +7,7 @@ import (
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
+	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
 type listMode int
@@ -187,7 +188,7 @@ func (sl *SelectList) handleEventsAtSearchMode(e ui.Event) {
 func (sl *SelectList) doSearch() {
 	var searchResult []Cmd
 	for _, v := range sl.normalItems {
-		if strings.Contains(v.Name, sl.searchStr) || strings.Contains(v.Cmd, sl.searchStr) {
+		if fuzzy.Match(sl.searchStr, v.Name) || fuzzy.Match(sl.searchStr, v.Cmd) {
 			searchResult = append(searchResult, v)
 		}
 	}

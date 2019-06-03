@@ -2,6 +2,8 @@ github.com/cjbassi/drawille-go v0.0.0-20190126131713-27dc511fe6fd h1:XtfPmj9tQRi
 github.com/cjbassi/drawille-go v0.0.0-20190126131713-27dc511fe6fd/go.mod h1:vjcQJUZJYD3MeVGhtZXSMnCHfUNZxsyYzJt90eCYxK4=
 github.com/gizak/termui/v3 v3.0.0 h1:NYTUG6ig/sJK05O5FyhWemwlVPO8ilNpvS/PgRtrKAE=
 github.com/gizak/termui/v3 v3.0.0/go.mod h1:uinu2dMdtMI+FTIdEFUJQT5y+KShnhQRshvPblXq3lY=
+github.com/lithammer/fuzzysearch v1.0.2 h1:AjCE2iwc5y+8K+h2nXVc0Pmrpjvu+JVqMgiZ0oakXDM=
+github.com/lithammer/fuzzysearch v1.0.2/go.mod h1:bvAJyokfCQ7Vknrd4Kgc+izmMrPj5CiBAu2t6rK1Kak=
 github.com/mattn/go-runewidth v0.0.2 h1:UnlwIPBGaTZfPQ6T1IGzPI0EkYAQmT9fAEJ/poFC63o=
 github.com/mattn/go-runewidth v0.0.2/go.mod h1:LwmH8dsx7+W8Uxz3IHJYH5QSwggIsqBzpuz5H//U1FU=
 github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 h1:DpOJ2HYzCv8LZP15IdmG+YdwD2luVPHITV96TkirNBM=
