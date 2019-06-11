@@ -129,11 +129,11 @@ func (sl *SelectList) handleEventsAtNormalMode(e ui.Event) {
 
 func (sl *SelectList) handleEventsAtSearchMode(e ui.Event) {
 	switch e.ID {
-	case "<Down>", "<C-n>":
+	case "<Down>", "<C-j>":
 		if len(sl.searchItems) > 0 {
 			sl.uiList.ScrollDown()
 		}
-	case "<Up>", "<C-p>":
+	case "<Up>", "<C-k>":
 		if len(sl.searchItems) > 0 {
 			sl.uiList.ScrollUp()
 		}
