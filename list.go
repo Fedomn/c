@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/fatih/color"
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
 	"github.com/lithammer/fuzzysearch/fuzzy"
@@ -46,7 +47,7 @@ func NewUIList(items []Cmd, selectedCommandChan chan<- Cmd) *SelectList {
 
 func (sl *SelectList) initUI() {
 	if err := ui.Init(); err != nil {
-		fmt.Printf("Failed to initialize termui: %v", err)
+		color.Red("Failed to initialize termui: %v", err)
 		os.Exit(1)
 	}
 	uiList := widgets.NewList()

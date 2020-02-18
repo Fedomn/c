@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"syscall"
+
+	"github.com/fatih/color"
 )
 
 func ExecCommand(cmd Cmd) {
@@ -27,6 +29,5 @@ func ExecCommand(cmd Cmd) {
 }
 
 func printCmdInfo(cmd Cmd) {
-	fmt.Printf("\033[0;31mExecute %s : \033[0;39m", cmd.Name)
-	fmt.Printf("\033[0;32m%s\033[0;39m\n", cmd.Cmd)
+	fmt.Println(color.RedString("Execute %s :", cmd.Name), color.GreenString(cmd.Cmd))
 }

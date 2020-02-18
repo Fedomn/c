@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
+	"github.com/fatih/color"
 	"gopkg.in/yaml.v2"
 )
 
@@ -26,11 +26,11 @@ func LoadCommands() []Cmd {
 	var data []byte
 	var err error
 	if data, err = ioutil.ReadFile(configFile); err != nil {
-		fmt.Printf("Init bootstrap demo commands, please modify it: %s\n", configFile)
+		color.Green("Init bootstrap demo commands, please modify it: %s", configFile)
 		return initBootstrapCommands()
 	}
 	if err = yaml.Unmarshal(data, &commands); err != nil {
-		fmt.Printf("Failed to parse %s\n", configFile)
+		color.Red("Failed to parse %s", configFile)
 		os.Exit(1)
 	}
 	return commands
@@ -42,11 +42,11 @@ func initBootstrapCommands() []Cmd {
  cmd: curl https://ifconfig.co/json`)
 	var commands []Cmd
 	if err := yaml.Unmarshal(data, &commands); err != nil {
-		fmt.Println("Init bootstrap commands failed")
+		color.Red("Init bootstrap commands failed")
 		os.Exit(1)
 	}
 	if err := ioutil.WriteFile(configFile, data, 0644); err != nil {
-		fmt.Println("Init bootstrap commands failed")
+		color.Red("Init bootstrap commands failed")
 		os.Exit(1)
 	}
 	return commands
