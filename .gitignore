@@ -2,3 +2,4 @@
 .idea
 c
 .c.conf
+*.log

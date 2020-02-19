@@ -59,11 +59,13 @@ func (sl *SelectList) initUI() {
 	uiList.WrapText = false
 
 	sl.uiList = uiList
+	debug("Init uiList successfully.")
 }
 
 func (sl *SelectList) resizeUI() {
 	termWidth, termHeight := ui.TerminalDimensions()
 	sl.uiList.SetRect(0, 0, termWidth, termHeight)
+	debug("Resize uiList successfully.")
 }
 
 func (sl *SelectList) renderUI() {
@@ -83,6 +85,7 @@ func (sl *SelectList) renderUI() {
 	}
 	sl.uiList.Rows = rows
 	ui.Render(sl.uiList)
+	debug("Render uiList successfully. Selected Row Index: %v", sl.uiList.SelectedRow)
 }
 
 func (sl *SelectList) ListenEvents() {
@@ -99,6 +102,7 @@ func (sl *SelectList) ListenEvents() {
 }
 
 func (sl *SelectList) handleEventsAtNormalMode(e ui.Event) {
+	debug("Normal Mode Event: %+v", e)
 	switch e.ID {
 	case "j", "<Down>":
 		sl.uiList.ScrollDown()
@@ -129,6 +133,7 @@ func (sl *SelectList) handleEventsAtNormalMode(e ui.Event) {
 }
 
 func (sl *SelectList) handleEventsAtSearchMode(e ui.Event) {
+	debug("Search Mode Event: %+v", e)
 	switch e.ID {
 	case "<Down>", "<C-j>":
 		if len(sl.searchItems) > 0 {
