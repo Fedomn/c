@@ -142,6 +142,12 @@ func (sl *SelectList) handleEventsAtSearchMode(e ui.Event) {
 		if len(sl.searchItems) > 0 {
 			sl.uiList.ScrollUp()
 		}
+	case "<C-u>":
+		if len(sl.searchStr) != 0 {
+			sl.searchStr = ""
+			sl.uiList.Title = fmt.Sprintf(sl.searchTitle, sl.searchStr)
+			sl.doSearch()
+		}
 	case "<Resize>":
 		sl.resizeUI()
 	case "<Enter>":
