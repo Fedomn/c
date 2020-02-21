@@ -1,7 +1,7 @@
 github.com/fatih/color v1.9.0 h1:8xPHl4/q1VyqGIPif1F+1V3Y3lSmrq01EabUW3CoW5s=
 github.com/fatih/color v1.9.0/go.mod h1:eQcE1qtQxscV5RaZvpXrrb8Drkc3/DdQ+uUYCNjL+zU=
-github.com/fedomn/termui/v3 v3.4.0 h1:EsmeqwZpBaeRS2LCRM8q9vVvhF3T8raKkhezEzUlHmE=
-github.com/fedomn/termui/v3 v3.4.0/go.mod h1:GMiWd03aRcQNBdvcp8CooZdzqTy2VHulkOmrwXFjkYg=
+github.com/fedomn/termui/v3 v3.4.1 h1:yiiEFoN4glqYiRTZwgS7VeTSf/QccC1ladAKuBd31dQ=
+github.com/fedomn/termui/v3 v3.4.1/go.mod h1:GMiWd03aRcQNBdvcp8CooZdzqTy2VHulkOmrwXFjkYg=
 github.com/lithammer/fuzzysearch v1.1.0 h1:go9v8tLCrNTTlH42OAaq4eHFe81TDHEnlrMEb6R4f+A=
 github.com/lithammer/fuzzysearch v1.1.0/go.mod h1:Bqx4wo8lTOFcJr3ckpY6HA9lEIOO0H5HrkJ5CsN56HQ=
 github.com/mattn/go-colorable v0.1.4 h1:snbPLB8fVfU9iwbbo30TPtbLRzwWu6aJS6Xh4eaaviA=
