@@ -55,7 +55,6 @@ func (sl *SelectList) initUI() {
 	uiList.TitleStyle = ui.NewStyle(ui.ColorGreen, ui.ColorClear, ui.ModifierBold)
 	uiList.BorderStyle = ui.NewStyle(ui.ColorWhite)
 	uiList.TextStyle = ui.NewStyle(ui.ColorCyan)
-	uiList.SelectedRowStyle = ui.NewStyle(ui.ColorGreen)
 	uiList.WrapText = false
 
 	sl.uiList = uiList
@@ -78,7 +77,8 @@ func (sl *SelectList) renderUI() {
 	}
 	for k, v := range items {
 		if k == sl.uiList.SelectedRow {
-			rows = append(rows, fmt.Sprintf("[%02d] %s %s", k, v.Name, v.Cmd))
+			format := "[[%02d]](fg:green) [%s](fg:green,mod:underline) - [%s](fg:green,mod:bold)"
+			rows = append(rows, fmt.Sprintf(format, k, v.Name, v.Cmd))
 		} else {
 			rows = append(rows, fmt.Sprintf("[%02d] %s", k, v.Name))
 		}
