@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/fatih/color"
 	ui "github.com/fedomn/termui/v3"
@@ -178,13 +177,15 @@ func (sl *SelectList) handleEventsAtSearchMode(e ui.Event) {
 			sl.uiList.Title = fmt.Sprintf(sl.searchTitle, sl.searchStr)
 			sl.doSearch()
 		}
+	case "<Space>":
+		sl.searchStr += " "
+		sl.uiList.Title = fmt.Sprintf(sl.searchTitle, sl.searchStr)
+		sl.doSearch()
 	default:
-		if e.ID == "<Space>" {
-			sl.searchStr += " "
-		} else if strings.Contains(e.ID, "<C-") {
-		} else {
-			sl.searchStr += e.ID
+		if len(e.ID) != 1 {
+			return
 		}
+		sl.searchStr += e.ID
 		sl.uiList.Title = fmt.Sprintf(sl.searchTitle, sl.searchStr)
 		sl.doSearch()
 	}
