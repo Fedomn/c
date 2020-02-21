@@ -36,8 +36,8 @@ func NewUIList(items []Cmd, selectedCommandChan chan<- Cmd) *SelectList {
 		uiList:              widgets.NewList(),
 		selectedMode:        NormalMode,
 		selectedCommandChan: selectedCommandChan,
-		normalTitle:         "Commands: (1: <Enter>Confirm 2: </>Search 3: <q/ESC>Exit)",
-		searchTitle:         "Search: ",
+		normalTitle:         "Usage: (Search:</>) (Up/Down:<k>/<j>) (Exit:<C-c>/<Esc>)",
+		searchTitle:         "Search: [%s](fg:red)  |  Usage: (Up/Down:<C-k>/<C-j>) (Exit:<C-c>/<Esc>) (Erase:<C-u>)",
 	}
 	selectList.initUI()
 	selectList.resizeUI()
@@ -52,7 +52,7 @@ func (sl *SelectList) initUI() {
 	}
 	uiList := widgets.NewList()
 	uiList.Title = sl.normalTitle
-	uiList.TitleStyle = ui.NewStyle(ui.ColorGreen, ui.ColorClear, ui.ModifierBold)
+	uiList.TitleStyle = ui.NewStyle(ui.ColorBlue, ui.ColorClear, ui.ModifierBold)
 	uiList.BorderStyle = ui.NewStyle(ui.ColorWhite)
 	uiList.TextStyle = ui.NewStyle(ui.ColorCyan)
 	uiList.WrapText = false
@@ -77,7 +77,7 @@ func (sl *SelectList) renderUI() {
 	}
 	for k, v := range items {
 		if k == sl.uiList.SelectedRow {
-			format := "[[%02d]](fg:green) [%s](fg:green,mod:underline) - [%s](fg:green,mod:bold)"
+			format := "[[%02d]](fg:green) [%s](fg:green,mod:underline) [-](fg:cyan,mod:bold) [%s](fg:green,mod:bold)"
 			rows = append(rows, fmt.Sprintf(format, k, v.Name, v.Cmd))
 		} else {
 			rows = append(rows, fmt.Sprintf("[%02d] %s", k, v.Name))
@@ -126,7 +126,7 @@ func (sl *SelectList) handleEventsAtNormalMode(e ui.Event) {
 		sl.resizeUI()
 	case "/":
 		sl.selectedMode = SearchMode
-		sl.uiList.Title = sl.searchTitle
+		sl.uiList.Title = fmt.Sprintf(sl.searchTitle, sl.searchStr)
 		sl.uiList.SelectedRow = 0
 	}
 	sl.renderUI()
@@ -175,7 +175,7 @@ func (sl *SelectList) handleEventsAtSearchMode(e ui.Event) {
 	case "<Backspace>":
 		if len(sl.searchStr) > 0 {
 			sl.searchStr = sl.searchStr[:len(sl.searchStr)-1]
-			sl.uiList.Title = sl.searchTitle + sl.searchStr
+			sl.uiList.Title = fmt.Sprintf(sl.searchTitle, sl.searchStr)
 			sl.doSearch()
 		}
 	default:
@@ -185,7 +185,7 @@ func (sl *SelectList) handleEventsAtSearchMode(e ui.Event) {
 		} else {
 			sl.searchStr += e.ID
 		}
-		sl.uiList.Title = sl.searchTitle + sl.searchStr
+		sl.uiList.Title = fmt.Sprintf(sl.searchTitle, sl.searchStr)
 		sl.doSearch()
 	}
 	sl.renderUI()
