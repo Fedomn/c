@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	ui "github.com/gizak/termui/v3"
-	"github.com/gizak/termui/v3/widgets"
+	ui "github.com/fedomn/termui/v3"
+	"github.com/fedomn/termui/v3/widgets"
 	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
