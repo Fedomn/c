@@ -142,22 +142,6 @@ func (sl *SelectList) handleEventsAtSearchMode(e ui.Event) {
 		if len(sl.searchItems) > 0 {
 			sl.uiList.ScrollUp()
 		}
-	case "<C-d>":
-		if len(sl.searchItems) > 0 {
-			sl.uiList.ScrollHalfPageDown()
-		}
-	case "<C-u>":
-		if len(sl.searchItems) > 0 {
-			sl.uiList.ScrollHalfPageUp()
-		}
-	case "<C-f>":
-		if len(sl.searchItems) > 0 {
-			sl.uiList.ScrollPageDown()
-		}
-	case "<C-b>":
-		if len(sl.searchItems) > 0 {
-			sl.uiList.ScrollPageUp()
-		}
 	case "<Resize>":
 		sl.resizeUI()
 	case "<Enter>":
