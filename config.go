@@ -33,6 +33,11 @@ func LoadCommands() []Cmd {
 		color.Red("Failed to parse %s", configFile)
 		os.Exit(1)
 	}
+
+	if len(commands) == 0 {
+		color.Red("%s is empty, please fill in your configuration.", configFile)
+		os.Exit(1)
+	}
 	return commands
 }
 

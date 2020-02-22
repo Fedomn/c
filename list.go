@@ -30,6 +30,10 @@ type SelectList struct {
 }
 
 func NewUIList(items []Cmd, selectedCommandChan chan<- Cmd) *SelectList {
+	if len(items) == 0 {
+		color.Red("Cmd list is empty, please fill in your configuration first.")
+		os.Exit(1)
+	}
 	selectList := &SelectList{
 		normalItems:         items,
 		searchItems:         items,
