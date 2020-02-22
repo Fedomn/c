@@ -26,6 +26,7 @@ type SelectList struct {
 	normalTitle         string
 	searchTitle         string
 	searchStr           string
+	isClose             bool
 }
 
 func NewUIList(items []Cmd, selectedCommandChan chan<- Cmd) *SelectList {
@@ -37,6 +38,7 @@ func NewUIList(items []Cmd, selectedCommandChan chan<- Cmd) *SelectList {
 		selectedCommandChan: selectedCommandChan,
 		normalTitle:         "Usage: (Search:</>) (Up/Down:<k>/<j>) (Exit:<C-c>/<Esc>)",
 		searchTitle:         "Search: [%s](fg:red)  |  Usage: (Up/Down:<C-k>/<C-j>) (Exit:<C-c>/<Esc>) (Erase:<C-u>)",
+		isClose:             false,
 	}
 	selectList.initUI()
 	selectList.resizeUI()
@@ -116,10 +118,10 @@ func (sl *SelectList) handleEventsAtNormalMode(e ui.Event) {
 	case "<C-b>":
 		sl.uiList.ScrollPageUp()
 	case "q", "<C-c>", "<Escape>":
-		ui.Close()
+		sl.close()
 		sl.selectedCommandChan <- Cmd{}
 	case "<Enter>":
-		ui.Close()
+		sl.close()
 		sl.selectedCommandChan <- sl.normalItems[sl.uiList.SelectedRow]
 	case "<Resize>":
 		sl.resizeUI()
@@ -152,7 +154,7 @@ func (sl *SelectList) handleEventsAtSearchMode(e ui.Event) {
 		sl.resizeUI()
 	case "<Enter>":
 		if len(sl.searchItems) > 0 {
-			ui.Close()
+			sl.close()
 			sl.selectedCommandChan <- sl.searchItems[sl.uiList.SelectedRow]
 		}
 	case "<C-c>", "<Escape>":
@@ -191,4 +193,13 @@ func (sl *SelectList) doSearch() {
 	}
 	sl.uiList.SelectedRow = 0
 	sl.searchItems = searchResult
+}
+
+func (sl *SelectList) close() {
+	if sl.isClose {
+		return
+	}
+
+	sl.isClose = true
+	ui.Close()
 }
