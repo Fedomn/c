@@ -6,3 +6,6 @@ compile:
 upx: compile
 	upx release/c.linux
 	upx release/c.darwin
+
+test:
+	ginkgo -v
