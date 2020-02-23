@@ -131,8 +131,8 @@ func (sl *SelectList) handleEventsAtNormalMode(e ui.Event) {
 		sl.resizeUI()
 	case "/":
 		sl.selectedMode = SearchMode
-		sl.uiList.Title = fmt.Sprintf(sl.searchTitle, sl.searchStr)
 		sl.uiList.SelectedRow = 0
+		sl.setSearchTitle()
 	}
 	sl.renderUI()
 }
@@ -151,7 +151,7 @@ func (sl *SelectList) handleEventsAtSearchMode(e ui.Event) {
 	case "<C-u>":
 		if len(sl.searchStr) != 0 {
 			sl.searchStr = ""
-			sl.uiList.Title = fmt.Sprintf(sl.searchTitle, sl.searchStr)
+			sl.setSearchTitle()
 			sl.doSearch()
 		}
 	case "<Resize>":
@@ -170,22 +170,26 @@ func (sl *SelectList) handleEventsAtSearchMode(e ui.Event) {
 	case "<Backspace>":
 		if len(sl.searchStr) > 0 {
 			sl.searchStr = sl.searchStr[:len(sl.searchStr)-1]
-			sl.uiList.Title = fmt.Sprintf(sl.searchTitle, sl.searchStr)
+			sl.setSearchTitle()
 			sl.doSearch()
 		}
 	case "<Space>":
 		sl.searchStr += " "
-		sl.uiList.Title = fmt.Sprintf(sl.searchTitle, sl.searchStr)
+		sl.setSearchTitle()
 		sl.doSearch()
 	default:
 		if len(e.ID) != 1 {
 			return
 		}
 		sl.searchStr += e.ID
-		sl.uiList.Title = fmt.Sprintf(sl.searchTitle, sl.searchStr)
+		sl.setSearchTitle()
 		sl.doSearch()
 	}
 	sl.renderUI()
+}
+
+func (sl *SelectList) setSearchTitle() {
+	sl.uiList.Title = fmt.Sprintf(sl.searchTitle, sl.searchStr)
 }
 
 func (sl *SelectList) doSearch() {
