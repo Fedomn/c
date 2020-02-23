@@ -23,10 +23,3 @@ jobs:
 
       - name: Build
         run: go build -v ./...
-
-      - name: Test
-        run: |
-          sudo chmod +0666 /dev/uinput # Fix simulate keyboard permission issue
-          export PATH=$PATH:$(go env GOPATH)/bin # temporary fix. See https://github.com/actions/setup-go/issues/14
-          go get -v github.com/onsi/ginkgo/ginkgo
-          make test
