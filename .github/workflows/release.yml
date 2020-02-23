@@ -1,11 +1,8 @@
 name: Release
 on: [push, pull_request]
 jobs:
-  test:
-    strategy:
-      matrix:
-        platform: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.platform }}
+  goreleaser:
+    runs-on: ubuntu-latest
     steps:
       - name: Setup Go
         uses: actions/setup-go@v1
