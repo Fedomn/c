@@ -5,7 +5,8 @@
 
 Make command operation easier to use.
 
-![Commander Operator](assets/command-operator.png)
+![Commander Operator](assets/normal-mode.png)
+![Commander Operator](assets/search-mode.png)
 
 # Features
 
@@ -20,8 +21,8 @@ configuration demo:
 
 ```yaml
 -
- name: show ip
- cmd: curl https://ifconfig.co
+ name: jump server
+ cmd: ssh jump@server
 -
  name: show date
  cmd: date
@@ -39,6 +40,8 @@ Terminal UI shortcuts in normal mode:
 | `<C-b>` | Scroll Page Up |
 | `q` / `<C-c>` / `<Escape>` | Close App |
 | `/` | Into Search Mode |
+| `Enter` | Select a command |
+| `Backspace` | Delete the last letter of search string |
 
 
 Terminal UI shortcuts in search mode:
@@ -47,8 +50,6 @@ Terminal UI shortcuts in search mode:
 | :--- | :--- |
 | `<C-j>` / `<Down>` | Scroll Down |
 | `<C-k>` / `<Up>` | Scroll Up |
-| `<C-d>` | Scroll Half Page Down |
-| `<C-u>` | Scroll Half Page Up |
-| `<C-f>` | Scroll Page Down |
-| `<C-b>` | Scroll Page Up |
+| `<C-u>` | Erase search string |
 | `<C-c>` / `<Escape>` | Back to Normal Mode |
+| `Backspace` | Delete the last letter of search string |
