@@ -8,6 +8,16 @@ Make command operation easier to use.
 ![Commander Operator](assets/normal-mode.png)
 ![Commander Operator](assets/search-mode.png)
 
+# Install
+
+```shell
+# macOS
+curl https://raw.githubusercontent.com/Fedomn/c/master/release/c.darwin -o c && chmod +x ./c
+
+# linux
+curl https://raw.githubusercontent.com/Fedomn/c/master/release/c.linux -o c && chmod +x ./c
+```
+
 # Features
 
 * YAML format make configuration easier
