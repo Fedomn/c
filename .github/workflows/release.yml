@@ -1,5 +1,8 @@
 name: Release
-on: [push, pull_request]
+on:
+  push:
+    tags:
+      - '*'
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
