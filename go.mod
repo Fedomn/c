@@ -1,4 +1,4 @@
-module fedomn/c
+module github.com/fedomn/c
 
 go 1.14
 
