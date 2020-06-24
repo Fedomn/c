@@ -66,7 +66,7 @@ lint:
 gosec:
 	@echo "gosec"
 	@command -v gosec > /dev/null 2>&1 || curl -sSfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b $(GOPATH)/bin v2.3.0
-	@gosec $(CURDIR)
+	@gosec -exclude=G204 $(CURDIR)
 
 checksucc:
 	@echo "check successfully!"

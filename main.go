@@ -5,10 +5,7 @@ func main() {
 
 	go NewUIList(LoadCommands(), selectedCommandChan).ListenEvents()
 
-	for {
-		select {
-		case command := <-selectedCommandChan:
-			ExecCommand(command)
-		}
+	for command := range selectedCommandChan {
+		ExecCommand(command)
 	}
 }

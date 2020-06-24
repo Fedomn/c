@@ -16,7 +16,7 @@ var logger *log.Logger
 func init() {
 	if enableDebug {
 		logPath := filepath.Dir(os.Args[0]) + "/debug.log"
-		fd, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		fd, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 		if err != nil {
 			color.Red("Failed to init debug.log.")
 			os.Exit(1)

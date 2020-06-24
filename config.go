@@ -25,7 +25,7 @@ func LoadCommands() []Cmd {
 	var commands []Cmd
 	var data []byte
 	var err error
-	if data, err = ioutil.ReadFile(configFile); err != nil {
+	if data, err = ioutil.ReadFile(filepath.Clean(configFile)); err != nil {
 		color.Green("Init bootstrap demo commands, please modify it: %s", configFile)
 		return initBootstrapCommands()
 	}
@@ -50,7 +50,7 @@ func initBootstrapCommands() []Cmd {
 		color.Red("Init bootstrap commands failed")
 		os.Exit(1)
 	}
-	if err := ioutil.WriteFile(configFile, data, 0644); err != nil {
+	if err := ioutil.WriteFile(configFile, data, 0600); err != nil {
 		color.Red("Init bootstrap commands failed")
 		os.Exit(1)
 	}
