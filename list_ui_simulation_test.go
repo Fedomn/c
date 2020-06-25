@@ -1,3 +1,5 @@
+// +build simulation
+
 package main
 
 import (
