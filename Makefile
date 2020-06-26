@@ -15,8 +15,14 @@ upx: compile
 	upx release/c.linux
 	upx release/c.darwin
 
+simulation:
+	ginkgo -v -tags simulation
+
+mockgen:
+	mockgen -destination=mock_rsync.go -package=main -source=rsync.go
+
 test:
-	ginkgo -v
+	@go test -v ./... | sed /PASS/s//$(shell printf "\033[32mPASS\033[0m")/ | sed /FAIL/s//$(shell printf "\033[31mFAIL\033[0m")/
 
 check: vet fmtcheck spellcheck goword staticcheck lint gosec checksucc
 

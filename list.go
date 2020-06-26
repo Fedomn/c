@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"os"
 
@@ -27,6 +29,7 @@ type SelectList struct {
 	searchTitle         string
 	searchStr           string
 	isClose             bool
+	rsyncUploader       RsyncUploader
 }
 
 func NewUIList(items []Cmd, selectedCommandChan chan<- Cmd) *SelectList {
@@ -40,14 +43,18 @@ func NewUIList(items []Cmd, selectedCommandChan chan<- Cmd) *SelectList {
 		uiList:              widgets.NewList(),
 		selectedMode:        NormalMode,
 		selectedCommandChan: selectedCommandChan,
-		normalTitle:         "Usage: (Search:</>) (Up/Down:<k>/<j>) (Exit:<C-c>/<Esc>)",
-		searchTitle:         "Search: [%s](fg:red)  |  Usage: (Up/Down:<C-k>/<C-j>) (Exit:<C-c>/<Esc>) (Erase:<C-u>)",
+		normalTitle:         "Usage: (Search:</>) (Up/Down:<k>/<j>) (Exit:<C-c>/<Esc>) (Rsync:<C-r>)",
+		searchTitle:         "Search: [%s](fg:red)  |  Usage: (Up/Down:<C-k>/<C-j>) (Exit:<C-c>/<Esc>) (Erase:<C-u>) (Rsync:<C-r>)",
 		isClose:             false,
 	}
 	selectList.initUI()
 	selectList.resizeUI()
 	selectList.renderUI()
 	return selectList
+}
+
+func (sl *SelectList) registerRsyncUploader(rsyncUploader RsyncUploader) {
+	sl.rsyncUploader = rsyncUploader
 }
 
 func (sl *SelectList) initUI() {
@@ -106,6 +113,24 @@ func (sl *SelectList) ListenEvents() {
 	}
 }
 
+//lint:file-ignore U1000 Ignore unused code, it will be used in the future, now for the simulation test.
+func (sl *SelectList) listenEventsWithCancel(ctx context.Context) {
+	uiEvents := ui.PollEvents()
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case e := <-uiEvents:
+			switch sl.selectedMode {
+			case NormalMode:
+				sl.handleEventsAtNormalMode(e)
+			case SearchMode:
+				sl.handleEventsAtSearchMode(e)
+			}
+		}
+	}
+}
+
 func (sl *SelectList) handleEventsAtNormalMode(e ui.Event) {
 	debug("Normal Mode Event: %+v", e)
 	switch e.ID {
@@ -127,6 +152,8 @@ func (sl *SelectList) handleEventsAtNormalMode(e ui.Event) {
 	case "<Enter>":
 		sl.close()
 		sl.selectedCommandChan <- sl.normalItems[sl.uiList.SelectedRow]
+	case "<C-r>":
+		sl.rsync()
 	case "<Resize>":
 		sl.resizeUI()
 	case "/":
@@ -161,6 +188,8 @@ func (sl *SelectList) handleEventsAtSearchMode(e ui.Event) {
 			sl.close()
 			sl.selectedCommandChan <- sl.searchItems[sl.uiList.SelectedRow]
 		}
+	case "<C-r>":
+		sl.rsync()
 	case "<C-c>", "<Escape>":
 		sl.selectedMode = NormalMode
 		sl.searchStr = ""
@@ -210,4 +239,26 @@ func (sl *SelectList) close() {
 
 	sl.isClose = true
 	ui.Close()
+}
+
+func (sl *SelectList) rsync() {
+	selectedCmd := Cmd{}
+	if sl.selectedMode == NormalMode {
+		selectedCmd = sl.normalItems[sl.uiList.SelectedRow]
+	} else if sl.selectedMode == SearchMode {
+		selectedCmd = sl.searchItems[sl.uiList.SelectedRow]
+	}
+
+	uploadCmd, err := sl.rsyncUploader.Upload(selectedCmd)
+	if errors.Is(err, ErrRsUserCancel) || errors.Is(err, ErrRsNotSSHCmd) {
+		debug("RsyncUpload get: %+v, then do nothing.", err)
+		return
+	} else if err != nil {
+		sl.close()
+		color.Red("RsyncUpload get: %v, will exit.", err)
+		os.Exit(1)
+	}
+
+	sl.close()
+	sl.selectedCommandChan <- Cmd{uploadCmd, fmt.Sprintf("Rsync %s", selectedCmd.Name), ""}
 }

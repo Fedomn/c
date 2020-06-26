@@ -24,6 +24,8 @@ curl https://raw.githubusercontent.com/Fedomn/c/master/release/c.linux -o c && c
 * Terminal UI make operation faster
 * Fuzzy Search make searching more convenient
 * Including flexible normal mode and search mode
+* Support rsync upload function based on SSH command
+    * ssh cmd pattern must be `ssh -i key user@ip`
 
 # Usage
 
@@ -31,8 +33,11 @@ configuration demo:
 
 ```yaml
 -
+ name: show ip
+ cmd: curl https://ifconfig.co/json
+-
  name: jump server
- cmd: ssh jump@server
+ cmd: ssh -i key user@ip
 -
  name: show date
  cmd: date
@@ -48,6 +53,7 @@ Terminal UI shortcuts in normal mode:
 | `<C-u>` | Scroll Half Page Up |
 | `<C-f>` | Scroll Page Down |
 | `<C-b>` | Scroll Page Up |
+| `<C-r>` | Rsync Upload |
 | `q` / `<C-c>` / `<Escape>` | Close App |
 | `/` | Into Search Mode |
 | `Enter` | Select a command |
@@ -61,5 +67,6 @@ Terminal UI shortcuts in search mode:
 | `<C-j>` / `<Down>` | Scroll Down |
 | `<C-k>` / `<Up>` | Scroll Up |
 | `<C-u>` | Erase search string |
+| `<C-r>` | Rsync Upload |
 | `<C-c>` / `<Escape>` | Back to Normal Mode |
 | `Backspace` | Delete the last letter of search string |
