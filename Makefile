@@ -2,16 +2,16 @@ GOPATH	?= $(shell go env GOPATH)
 CURDIR	= $(shell go list -f '{{.Dir}}' ./...)
 FILES	:= $$(find $(CURDIR) -name "*.go")
 
-.PHONY: compile upx test check
+.PHONY: release upx simulation mockgen test check
 
-default: compile
+default: check
 
-compile:
+release: check test simulation
 	echo "Compiling for Darwin and Linux"
 	GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o release/c.linux
 	go build -ldflags="-s -w" -o release/c.darwin
 
-upx: compile
+upx: release
 	upx release/c.linux
 	upx release/c.darwin
 
