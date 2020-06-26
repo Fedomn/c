@@ -1,4 +1,4 @@
-# Commander Operator
+# Command Operator
 
 [![Build Status](https://github.com/Fedomn/c/workflows/Go/badge.svg)](https://github.com/Fedomn/c/actions)
 [![Build Status](https://github.com/Fedomn/c/workflows/Release/badge.svg)](https://github.com/Fedomn/c/actions)
