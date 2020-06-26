@@ -3,9 +3,11 @@
 package main
 
 import (
+	"context"
 	"runtime"
 	"time"
 
+	"github.com/golang/mock/gomock"
 	keybd "github.com/micmonay/keybd_event"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -50,9 +52,11 @@ func pressKeyWithShift(keys ...int) {
 var _ = Describe("Select List", func() {
 
 	var (
-		cmds       []Cmd
-		cmdChan    chan Cmd
-		selectList *SelectList
+		cmds              []Cmd
+		cmdChan           chan Cmd
+		selectList        *SelectList
+		mockCtrl          *gomock.Controller
+		mockRsyncUploader *MockRsyncUploader
 	)
 
 	BeforeEach(func() {
@@ -64,9 +68,15 @@ var _ = Describe("Select List", func() {
 		}
 		cmdChan = make(chan Cmd)
 		selectList = NewUIList(cmds, cmdChan)
+
+		// mock rsyncUploader
+		mockCtrl = gomock.NewController(GinkgoT())
+		mockRsyncUploader = NewMockRsyncUploader(mockCtrl)
+		selectList.registerRsyncUploader(mockRsyncUploader)
 	})
 
 	AfterEach(func() {
+		mockCtrl.Finish()
 		selectList.close()
 	})
 
@@ -80,7 +90,9 @@ var _ = Describe("Select List", func() {
 		})
 
 		It("should scroll down by shortcut <j>", func(done Done) {
-			go selectList.ListenEvents()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go selectList.listenEventsWithCancel(ctx)
 
 			Expect(selectList.uiList.SelectedRow).To(Equal(0))
 			pressKey(keybd.VK_J)
@@ -90,7 +102,9 @@ var _ = Describe("Select List", func() {
 		})
 
 		It("should scroll up by shortcut <k>", func(done Done) {
-			go selectList.ListenEvents()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go selectList.listenEventsWithCancel(ctx)
 
 			Expect(selectList.uiList.SelectedRow).To(Equal(0))
 			pressKey(keybd.VK_J)
@@ -102,7 +116,9 @@ var _ = Describe("Select List", func() {
 		})
 
 		It("should scroll page down by shortcut <C-f>", func(done Done) {
-			go selectList.ListenEvents()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go selectList.listenEventsWithCancel(ctx)
 
 			Expect(selectList.uiList.SelectedRow).To(Equal(0))
 			pressKeyWithCtrl(keybd.VK_F)
@@ -112,7 +128,9 @@ var _ = Describe("Select List", func() {
 		})
 
 		It("should scroll page up by shortcut <C-b>", func(done Done) {
-			go selectList.ListenEvents()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go selectList.listenEventsWithCancel(ctx)
 
 			Expect(selectList.uiList.SelectedRow).To(Equal(0))
 			pressKeyWithCtrl(keybd.VK_F)
@@ -124,7 +142,9 @@ var _ = Describe("Select List", func() {
 		})
 
 		It("should close UI by shortcut <q>", func(done Done) {
-			go selectList.ListenEvents()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go selectList.listenEventsWithCancel(ctx)
 
 			Expect(selectList.uiList.SelectedRow).To(Equal(0))
 			pressKey(keybd.VK_J)
@@ -138,7 +158,9 @@ var _ = Describe("Select List", func() {
 		})
 
 		It("should send cmd to chan by shortcut <Enter>", func(done Done) {
-			go selectList.ListenEvents()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go selectList.listenEventsWithCancel(ctx)
 
 			Expect(selectList.uiList.SelectedRow).To(Equal(0))
 			pressKey(keybd.VK_J)
@@ -152,7 +174,9 @@ var _ = Describe("Select List", func() {
 		})
 
 		It("should into search mode by shortcut </>", func(done Done) {
-			go selectList.ListenEvents()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go selectList.listenEventsWithCancel(ctx)
 
 			Expect(selectList.uiList.SelectedRow).To(Equal(0))
 			pressKey(keybd.VK_J)
@@ -169,11 +193,45 @@ var _ = Describe("Select List", func() {
 			close(done)
 		})
 
+		It("should send rsync cmd to chan by shortcut <C-r>", func(done Done) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go selectList.listenEventsWithCancel(ctx)
+
+			mockRsyncUploader.EXPECT().Upload(cmds[0]).Return("rsync fake", nil)
+
+			Expect(selectList.uiList.SelectedRow).To(Equal(0))
+			pressKeyWithCtrl(keybd.VK_R)
+
+			Expect(<-cmdChan).To(Equal(Cmd{Name: "Rsync normal_cmd1_name", Cmd: `rsync fake`}))
+			Expect(selectList.isClose).To(BeTrue())
+
+			close(done)
+		})
+
+		It("should handle user cancel err by shortcut <C-r>", func(done Done) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go selectList.listenEventsWithCancel(ctx)
+
+			mockRsyncUploader.EXPECT().Upload(cmds[0]).Return("", ErrRsUserCancel)
+
+			Expect(selectList.uiList.SelectedRow).To(Equal(0))
+			pressKeyWithCtrl(keybd.VK_R)
+
+			Expect(selectList.selectedMode).To(Equal(NormalMode))
+			Expect(selectList.uiList.SelectedRow).To(Equal(0))
+			Expect(selectList.isClose).To(BeFalse())
+
+			close(done)
+		})
 	})
 
 	Context("Search Mode", func() {
 		It("should scroll down by shortcut <C-j>", func(done Done) {
-			go selectList.ListenEvents()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go selectList.listenEventsWithCancel(ctx)
 
 			Expect(selectList.selectedMode).To(Equal(NormalMode))
 
@@ -192,7 +250,9 @@ var _ = Describe("Select List", func() {
 		})
 
 		It("should scroll up by shortcut <C-k>", func(done Done) {
-			go selectList.ListenEvents()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go selectList.listenEventsWithCancel(ctx)
 
 			Expect(selectList.selectedMode).To(Equal(NormalMode))
 
@@ -213,7 +273,9 @@ var _ = Describe("Select List", func() {
 		})
 
 		It("should go through search flow normally and end with <Enter>", func(done Done) {
-			go selectList.ListenEvents()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go selectList.listenEventsWithCancel(ctx)
 
 			pressKey(keybd.VK_J)
 			//into search mode
@@ -258,7 +320,9 @@ var _ = Describe("Select List", func() {
 		}, 10)
 
 		It("should go through search flow normally and end with <C-c>", func(done Done) {
-			go selectList.ListenEvents()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go selectList.listenEventsWithCancel(ctx)
 
 			pressKey(keybd.VK_J)
 			//into search mode
@@ -285,6 +349,30 @@ var _ = Describe("Select List", func() {
 
 			close(done)
 		}, 10)
+
+		It("should send rsync cmd to chan by shortcut <C-r>", func(done Done) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go selectList.listenEventsWithCancel(ctx)
+
+			Expect(selectList.selectedMode).To(Equal(NormalMode))
+
+			pressKey(keybd.VK_J)
+			//into search mode
+			pressKey(keybd.VK_SP11)
+
+			Expect(selectList.selectedMode).To(Equal(SearchMode))
+			Expect(selectList.uiList.Title).To(HavePrefix("Search:"))
+			Expect(selectList.uiList.Rows).To(HaveLen(4))
+			Expect(selectList.uiList.SelectedRow).To(Equal(0))
+
+			mockRsyncUploader.EXPECT().Upload(cmds[0]).Return("rsync fake", nil)
+			pressKeyWithCtrl(keybd.VK_R)
+
+			Expect(<-cmdChan).To(Equal(Cmd{Name: "Rsync normal_cmd1_name", Cmd: `rsync fake`}))
+			Expect(selectList.isClose).To(BeTrue())
+			close(done)
+		})
 	})
 
 })
